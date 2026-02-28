@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Claude Board - 게시판 목록{% endblock %}
+{% block content %}
+
+{% set team_boards = boards | selectattr("board.category", "equalto", "team") | list %}
+{% set global_boards = boards | selectattr("board.category", "equalto", "global") | list %}
+
+{% if team_boards %}
+<div class="section-title">팀 업무게시판</div>
+<div class="board-grid">
+  {% for item in team_boards %}
+  <a href="/board/{{ item.board.slug }}" class="board-card" data-team="{{ item.board.team or '' }}">
+    <div class="icon">{{ item.board.icon }}</div>
+    <div class="name">{{ item.board.name }}</div>
+    <div class="desc">{{ item.board.description }}</div>
+    <div class="meta">
+      <span>글 {{ item.post_count }}개</span>
+      {% if item.latest_post %}
+      <span>최신: {{ item.latest_post.created_at | time_ago }}</span>
+      {% endif %}
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if global_boards %}
+<div class="section-title">전체 게시판</div>
+<div class="board-grid">
+  {% for item in global_boards %}
+  <a href="/board/{{ item.board.slug }}" class="board-card">
+    <div class="icon">{{ item.board.icon }}</div>
+    <div class="name">{{ item.board.name }}</div>
+    <div class="desc">{{ item.board.description }}</div>
+    <div class="meta">
+      <span>글 {{ item.post_count }}개</span>
+      {% if item.latest_post %}
+      <span>최신: {{ item.latest_post.created_at | time_ago }}</span>
+      {% endif %}
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% endblock %}

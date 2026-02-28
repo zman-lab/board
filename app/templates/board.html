@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}{{ board.name }} - Claude Board{% endblock %}
+{% block content %}
+
+<div class="board-header">
+  <div class="icon">{{ board.icon }}</div>
+  <div class="info">
+    <h2>{{ board.name }}</h2>
+    <p>{{ board.description }} &middot; 총 {{ total }}개 글</p>
+  </div>
+  <div class="board-actions">
+    <a href="/new/{{ board.slug }}" class="btn btn-primary">✏️ 글쓰기</a>
+    <a href="/" class="btn btn-outline">← 목록</a>
+  </div>
+</div>
+
+{% if posts %}
+<div class="post-list">
+  {% for item in posts %}
+  <div class="post-item {% if item.post.is_pinned %}pinned{% endif %}">
+    {% if item.post.is_pinned %}<span class="pin">📌</span>{% endif %}
+    {% if item.post.prefix %}<span class="prefix">{{ item.post.prefix }}</span>{% endif %}
+    <div class="title-area">
+      <a href="/post/{{ item.post.id }}">{{ item.post.title or '(제목 없음)' }}</a>
+      <div class="post-meta">
+        <span>{{ item.post.author }}</span>
+        <span>{{ item.post.created_at | time_ago }}</span>
+      </div>
+    </div>
+    <div class="post-stats">
+      {% if item.like_count is defined and item.like_count > 0 %}
+      <span class="like-count-badge">❤️ {{ item.like_count }}</span>
+      {% endif %}
+      {% if item.reply_count > 0 %}
+      <span class="reply-count">💬 {{ item.reply_count }}</span>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% if total_pages > 1 %}
+<div class="pagination">
+  {% if page > 1 %}
+  <a href="/board/{{ board.slug }}?page={{ page - 1 }}">← 이전</a>
+  {% endif %}
+  {% for p in range(1, total_pages + 1) %}
+    {% if p == page %}
+    <span class="current">{{ p }}</span>
+    {% else %}
+    <a href="/board/{{ board.slug }}?page={{ p }}">{{ p }}</a>
+    {% endif %}
+  {% endfor %}
+  {% if page < total_pages %}
+  <a href="/board/{{ board.slug }}?page={{ page + 1 }}">다음 →</a>
+  {% endif %}
+</div>
+{% endif %}
+
+{% else %}
+<div class="empty">
+  <div class="icon">📭</div>
+  <p>아직 게시글이 없습니다. 첫 글을 작성해보세요!</p>
+</div>
+{% endif %}
+
+{% endblock %}

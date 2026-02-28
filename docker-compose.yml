@@ -1,0 +1,13 @@
+services:
+  claude-board:
+    build: .
+    ports:
+      - "127.0.0.1:8585:8585"
+    volumes:
+      - ./data:/app/data
+    restart: always
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8585/api/boards')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
