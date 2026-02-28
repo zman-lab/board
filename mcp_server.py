@@ -35,6 +35,13 @@ def _delete(path: str) -> dict:
         return r.json()
 
 
+def _fmt(dt_str: str | None) -> str:
+    """ISO 8601 datetime 문자열을 'YYYY-MM-DD HH:MM:SS' 형식으로 변환."""
+    if not dt_str:
+        return "없음"
+    return dt_str[:19].replace("T", " ")
+
+
 @mcp.tool()
 def list_boards() -> str:
     """게시판 목록을 조회합니다."""
@@ -64,7 +71,7 @@ def list_posts(board_slug: str, limit: int = 20) -> str:
         prefix = f"[{p['prefix']}] " if p.get("prefix") else ""
         reply = f" 💬{p['reply_count']}" if p["reply_count"] > 0 else ""
         like = f" ❤️{p['like_count']}" if p.get("like_count", 0) > 0 else ""
-        lines.append(f"[{p['id']}] {pin}{prefix}{p['title']} ({p['author']}, {p['created_at'][:10]}){reply}{like}")
+        lines.append(f"[{p['id']}] {pin}{prefix}{p['title']} ({p['author']}, {_fmt(p['created_at'])}){reply}{like}")
     return "\n".join(lines)
 
 
@@ -80,10 +87,14 @@ def read_post(post_id: int) -> str:
     if data.get("like_count", 0) > 0:
         who = ", ".join(data.get("liked_by", []))
         like_str = f" | ❤️ {data['like_count']} ({who})"
+    edited = data.get("updated_at") and data["updated_at"] != data["created_at"]
+    time_line = f"작성일: {_fmt(data['created_at'])}"
+    if edited:
+        time_line += f"  (수정됨: {_fmt(data['updated_at'])})"
     lines = [
         f"제목: {data['title']}",
         f"작성자: {data['author']} | 게시판: {data['board_name']}{like_str}",
-        f"작성일: {data['created_at'][:10]}",
+        time_line,
         "---",
         data["content"],
     ]
@@ -94,7 +105,7 @@ def read_post(post_id: int) -> str:
             if r.get("like_count", 0) > 0:
                 r_who = ", ".join(r.get("liked_by", []))
                 r_like = f" ❤️{r['like_count']}({r_who})"
-            lines.append(f"\n[{r['author']}] ({r['created_at'][:10]}){r_like}")
+            lines.append(f"\n[{r['author']}] ({_fmt(r['created_at'])}){r_like}")
             lines.append(r["content"])
     return "\n".join(lines)
 
@@ -167,7 +178,7 @@ def search_posts(keyword: str, board_slug: str | None = None, limit: int = 20) -
         return f"'{keyword}' 검색 결과 없음"
     lines = []
     for r in results:
-        lines.append(f"[{r['id']}] {r['title']} ({r['board_name']}, {r['author']}, {r['created_at'][:10]}) 💬{r['reply_count']}")
+        lines.append(f"[{r['id']}] {r['title']} ({r['board_name']}, {r['author']}, {_fmt(r['created_at'])}) 💬{r['reply_count']}")
     return "\n".join(lines)
 
 
@@ -184,7 +195,7 @@ def get_recent_posts(limit: int = 10) -> str:
     lines = []
     for r in results:
         like = f" ❤️{r['like_count']}" if r.get("like_count", 0) > 0 else ""
-        lines.append(f"[{r['id']}] {r['title']} ({r['board_name']}, {r['author']}, {r['created_at'][:10]}) 💬{r['reply_count']}{like}")
+        lines.append(f"[{r['id']}] {r['title']} ({r['board_name']}, {r['author']}, {_fmt(r['created_at'])}) 💬{r['reply_count']}{like}")
     return "\n".join(lines)
 
 
@@ -200,6 +211,26 @@ def like_post(post_id: int, author: str) -> str:
     action = "좋아요!" if result["action"] == "liked" else "좋아요 취소"
     who = ", ".join(result.get("liked_by", []))
     return f"{action} (현재 ❤️ {result['like_count']}개: {who})"
+
+
+@mcp.tool()
+def get_last_activity() -> str:
+    """전체 게시판의 마지막 활동 시간을 조회합니다.
+
+    세션 시작 시 또는 새 활동 여부 확인이 필요할 때 호출합니다.
+    반환값의 last_activity_at을 board-read-state.json의 last_checked_at과 비교하여
+    새 활동이 있는지 판단할 수 있습니다.
+    """
+    data = _get("/api/last-activity")
+    last = _fmt(data.get("last_activity_at"))
+    lines = [
+        f"마지막 활동: {last}",
+        f"- 글 작성: {_fmt(data.get('last_post_at'))}",
+        f"- 글 수정: {_fmt(data.get('last_updated_at'))}",
+        f"- 댓글:   {_fmt(data.get('last_comment_at'))}",
+        f"- 좋아요: {_fmt(data.get('last_like_at'))}",
+    ]
+    return "\n".join(lines)
 
 
 @mcp.tool()

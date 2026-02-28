@@ -167,6 +167,7 @@ def api_list_posts(board_slug: str | None = None, limit: int = 20, offset: int =
             "id": p["post"].id, "title": p["post"].title, "author": p["post"].author,
             "prefix": p["post"].prefix, "tag": p["post"].tag, "is_pinned": p["post"].is_pinned,
             "created_at": p["post"].created_at.isoformat(),
+            "updated_at": p["post"].updated_at.isoformat() if p["post"].updated_at else None,
             "reply_count": p["reply_count"],
             "like_count": p["like_count"], "liked_by": p["liked_by"],
         }
@@ -184,12 +185,14 @@ def api_get_post(post_id: int, db: Session = Depends(get_db)):
         "content": data["post"].content, "author": data["post"].author,
         "prefix": data["post"].prefix, "tag": data["post"].tag, "is_pinned": data["post"].is_pinned,
         "created_at": data["post"].created_at.isoformat(),
+        "updated_at": data["post"].updated_at.isoformat() if data["post"].updated_at else None,
         "board_slug": data["board"].slug, "board_name": data["board"].name,
         "like_count": data["like_count"], "liked_by": data["liked_by"],
         "replies": [
             {
                 "id": r["reply"].id, "content": r["reply"].content, "author": r["reply"].author,
                 "created_at": r["reply"].created_at.isoformat(),
+                "updated_at": r["reply"].updated_at.isoformat() if r["reply"].updated_at else None,
                 "like_count": r["like_count"], "liked_by": r["liked_by"],
             }
             for r in data["replies"]
@@ -274,6 +277,7 @@ def api_search(q: str, board_slug: str | None = None, limit: int = 20, db: Sessi
             "board_slug": r["board"].slug if r["board"] else "",
             "board_name": r["board"].name if r["board"] else "",
             "created_at": r["post"].created_at.isoformat(),
+            "updated_at": r["post"].updated_at.isoformat() if r["post"].updated_at else None,
             "reply_count": r["reply_count"],
             "like_count": r["like_count"],
         }
@@ -290,8 +294,23 @@ def api_recent(limit: int = 10, db: Session = Depends(get_db)):
             "board_slug": r["board"].slug if r["board"] else "",
             "board_name": r["board"].name if r["board"] else "",
             "created_at": r["post"].created_at.isoformat(),
+            "updated_at": r["post"].updated_at.isoformat() if r["post"].updated_at else None,
             "reply_count": r["reply_count"],
             "like_count": r["like_count"],
         }
         for r in results
     ]
+
+
+@app.get("/api/last-activity")
+def api_last_activity(db: Session = Depends(get_db)):
+    data = crud.get_last_activity(db)
+    def _iso(dt) -> str | None:
+        return dt.isoformat() if dt else None
+    return {
+        "last_post_at": _iso(data["last_post_at"]),
+        "last_updated_at": _iso(data["last_updated_at"]),
+        "last_comment_at": _iso(data["last_comment_at"]),
+        "last_like_at": _iso(data["last_like_at"]),
+        "last_activity_at": _iso(data["last_activity_at"]),
+    }

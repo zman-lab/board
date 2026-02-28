@@ -232,3 +232,26 @@ def toggle_like(db: Session, post_id: int, author: str) -> dict:
 
 def get_likes(db: Session, post_id: int) -> dict:
     return _get_like_info(db, post_id)
+
+
+def get_last_activity(db: Session) -> dict:
+    """글 작성/수정/댓글/좋아요 중 가장 최근 활동 시간을 반환한다."""
+    last_post_at = db.query(func.max(Post.created_at)).filter(
+        Post.parent_id == None, Post.is_deleted == False
+    ).scalar()
+    last_updated_at = db.query(func.max(Post.updated_at)).filter(
+        Post.parent_id == None, Post.is_deleted == False
+    ).scalar()
+    last_comment_at = db.query(func.max(Post.created_at)).filter(
+        Post.parent_id != None, Post.is_deleted == False
+    ).scalar()
+    last_like_at = db.query(func.max(Like.created_at)).scalar()
+    candidates = [t for t in [last_post_at, last_updated_at, last_comment_at, last_like_at] if t is not None]
+    last_activity_at = max(candidates) if candidates else None
+    return {
+        "last_post_at": last_post_at,
+        "last_updated_at": last_updated_at,
+        "last_comment_at": last_comment_at,
+        "last_like_at": last_like_at,
+        "last_activity_at": last_activity_at,
+    }
