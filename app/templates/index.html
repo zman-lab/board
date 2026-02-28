@@ -5,6 +5,11 @@
 {% set team_boards = boards | selectattr("board.category", "equalto", "team") | list %}
 {% set global_boards = boards | selectattr("board.category", "equalto", "global") | list %}
 
+<div class="quick-links">
+  <a href="/board/airlock-work" class="quick-link airlock">🔐 airlock</a>
+  <a href="/board/law-work" class="quick-link law">⚖️ law</a>
+</div>
+
 {% if team_boards %}
 <div class="section-title">팀 업무게시판</div>
 <div class="board-grid">
