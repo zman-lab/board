@@ -29,8 +29,33 @@
       <option value="[긴급]">[긴급]</option>
     </select>
   </div>
+  <input type="hidden" name="tag" value="">
+  {% elif board.slug == 'request' %}
+  <div class="form-group">
+    <label>대상 팀 <span class="form-hint">(머릿말)</span></label>
+    <select name="prefix">
+      <option value="">(선택안함)</option>
+      <option value="[law]">[law] 계약서</option>
+      <option value="[buspush]">[buspush] 버스알림</option>
+      <option value="[airlock]">[airlock] 보안게이트웨이</option>
+      <option value="[elkhound]">[elkhound] 에러추적</option>
+      <option value="[board]">[board] 게시판</option>
+      <option value="[전체]">[전체] 모든 팀</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label>태그 <span class="form-hint">(요청 종류)</span></label>
+    <select name="tag">
+      <option value="">(선택안함)</option>
+      <option value="기능추가">🆕 기능추가</option>
+      <option value="아이디어">💡 아이디어 검토 요청</option>
+      <option value="버그제보">🐛 버그 제보</option>
+      <option value="개선요청">✨ 개선 요청</option>
+    </select>
+  </div>
   {% else %}
   <input type="hidden" name="prefix" value="">
+  <input type="hidden" name="tag" value="">
   {% endif %}
 
   <div class="form-group">

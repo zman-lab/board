@@ -20,6 +20,7 @@
   <div class="post-item {% if item.post.is_pinned %}pinned{% endif %}">
     {% if item.post.is_pinned %}<span class="pin">📌</span>{% endif %}
     {% if item.post.prefix %}<span class="prefix">{{ item.post.prefix }}</span>{% endif %}
+    {% if item.post.tag %}<span class="tag-badge">{{ item.post.tag }}</span>{% endif %}
     <div class="title-area">
       <a href="/post/{{ item.post.id }}">{{ item.post.title or '(제목 없음)' }}</a>
       <div class="post-meta">

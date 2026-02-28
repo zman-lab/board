@@ -104,6 +104,7 @@ def create_post(db: Session, data: PostCreate) -> Post:
         content=data.content,
         author=data.author,
         prefix=data.prefix,
+        tag=data.tag,
         is_pinned=data.is_pinned,
     )
     db.add(post)

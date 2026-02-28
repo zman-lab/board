@@ -144,6 +144,14 @@ main { padding: 24px 0; }
   border-radius: 4px; background: var(--bg-hover); color: var(--text-muted);
   white-space: nowrap;
 }
+.tag-badge {
+  display: inline-block; font-size: .72rem; font-weight: 600; padding: 2px 8px;
+  border-radius: 10px; background: #e8f4fd; color: #2563eb; white-space: nowrap;
+}
+.tag-badge + .tag-badge { margin-left: 4px; }
+.post-detail .tag-badge { font-size: .8rem; padding: 3px 10px; }
+.form-hint { font-size: .8rem; color: var(--text-muted); font-weight: 400; }
+
 .post-item .title-area { flex: 1; min-width: 0; }
 .post-item .title-area a {
   font-weight: 500; color: var(--text); display: block;

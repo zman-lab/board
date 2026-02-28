@@ -114,11 +114,12 @@ def action_create_post(
     content: str = Form(...),
     author: str = Form(...),
     prefix: str = Form(""),
+    tag: str = Form(""),
     db: Session = Depends(get_db),
 ):
     data = PostCreate(
         board_slug=board_slug, title=title, content=content,
-        author=author, prefix=prefix or None,
+        author=author, prefix=prefix or None, tag=tag or None,
     )
     post = crud.create_post(db, data)
     return RedirectResponse(f"/post/{post.id}", status_code=303)
@@ -164,7 +165,7 @@ def api_list_posts(board_slug: str | None = None, limit: int = 20, offset: int =
     return [
         {
             "id": p["post"].id, "title": p["post"].title, "author": p["post"].author,
-            "prefix": p["post"].prefix, "is_pinned": p["post"].is_pinned,
+            "prefix": p["post"].prefix, "tag": p["post"].tag, "is_pinned": p["post"].is_pinned,
             "created_at": p["post"].created_at.isoformat(),
             "reply_count": p["reply_count"],
             "like_count": p["like_count"], "liked_by": p["liked_by"],
@@ -181,7 +182,7 @@ def api_get_post(post_id: int, db: Session = Depends(get_db)):
     return {
         "id": data["post"].id, "title": data["post"].title,
         "content": data["post"].content, "author": data["post"].author,
-        "prefix": data["post"].prefix, "is_pinned": data["post"].is_pinned,
+        "prefix": data["post"].prefix, "tag": data["post"].tag, "is_pinned": data["post"].is_pinned,
         "created_at": data["post"].created_at.isoformat(),
         "board_slug": data["board"].slug, "board_name": data["board"].name,
         "like_count": data["like_count"], "liked_by": data["liked_by"],

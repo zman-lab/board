@@ -35,6 +35,7 @@ class Post(Base):
     content = Column(Text, nullable=False)
     author = Column(String(100), nullable=False)
     prefix = Column(String(50), nullable=True)
+    tag = Column(String(50), nullable=True)
     is_pinned = Column(Boolean, default=False)
     is_deleted = Column(Boolean, default=False)
     created_at = Column(DateTime, default=_utcnow)

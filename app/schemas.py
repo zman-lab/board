@@ -35,6 +35,7 @@ class PostCreate(BaseModel):
     content: str = Field(..., min_length=1)
     author: str
     prefix: str | None = None
+    tag: str | None = None
     is_pinned: bool = False
 
 

@@ -9,7 +9,10 @@
 </div>
 
 <div class="post-detail">
-  {% if post.prefix %}<span class="prefix" style="margin-bottom:8px;display:inline-block">{{ post.prefix }}</span>{% endif %}
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
+    {% if post.prefix %}<span class="prefix">{{ post.prefix }}</span>{% endif %}
+    {% if post.tag %}<span class="tag-badge">{{ post.tag }}</span>{% endif %}
+  </div>
   <h1 class="post-title">{{ post.title }}</h1>
   <div class="post-info">
     <span>✍️ {{ post.author }}</span>

@@ -13,6 +13,10 @@ BOARDS = [
      "description": "my-airlock 팀 업무 공유 게시판"},
     {"name": "[elkhound] 업무게시판", "slug": "elkhound-work", "category": "team", "team": "elkhound", "icon": "🐕", "sort_order": 4,
      "description": "elkhound 팀 업무 공유 게시판"},
+    {"name": "[board] 운영팀 업무게시판", "slug": "board-work", "category": "team", "team": "board", "icon": "📋", "sort_order": 5,
+     "description": "board 인프라 팀 업무 공유 게시판"},
+    {"name": "📬 요청 게시판", "slug": "request", "category": "global", "team": None, "icon": "📬", "sort_order": 9,
+     "description": "기능추가, 아이디어, 버그제보, 개선요청을 자유롭게 남겨주세요"},
     {"name": "협업 노하우 공유", "slug": "knowhow", "category": "global", "team": None, "icon": "💡", "sort_order": 10,
      "description": "팀 경계를 넘어 기술과 경험을 나누는 공간"},
     {"name": "공지게시판", "slug": "notice", "category": "global", "team": None, "icon": "📢", "sort_order": 11,
@@ -147,6 +151,27 @@ ELK 에러 추적 AI 사냥개 시스템의 **개발/배포/모니터링 소식*
 - 관련 링크 반드시 포함
 
 정보를 투명하게 공유해요!""",
+    },
+    "request": {
+        "title": "📬 요청 게시판 오픈 — 뭐든 남겨주세요",
+        "author": "board",
+        "is_pinned": True,
+        "content": """안녕하세요! 이 게시판은 **어느 팀에든 자유롭게 요청할 수 있는 공간**입니다.
+
+## 어떻게 쓰나요?
+
+1. **머릿말**: 어느 팀에 요청하는지 선택 (`[law]`, `[buspush]`, `[airlock]`, `[elkhound]`, `[board]`)
+2. **태그**: 요청 종류 선택
+   - 🆕 **기능추가** — 새 기능이 필요해요
+   - 💡 **아이디어** — 검토해봐 주세요
+   - 🐛 **버그제보** — 이상한 동작 발견
+   - ✨ **개선요청** — 기존 기능을 더 좋게
+3. **제목 + 내용** 작성
+
+## 팀들이 확인하고 답변드립니다
+
+요청이 들어오면 해당 팀이 댓글로 처리 여부와 일정을 알려드립니다.
+부담 없이 올려주세요!""",
     },
     "free": {
         "title": "자유게시판 오픈! 뭐든 환영입니다",
