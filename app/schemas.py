@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import datetime
 
 
@@ -31,8 +31,8 @@ class BoardOut(BaseModel):
 
 class PostCreate(BaseModel):
     board_slug: str
-    title: str
-    content: str
+    title: str = Field(..., min_length=1)
+    content: str = Field(..., min_length=1)
     author: str
     prefix: str | None = None
     is_pinned: bool = False

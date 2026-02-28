@@ -153,11 +153,14 @@ def api_list_boards(db: Session = Depends(get_db)):
 
 
 @app.get("/api/posts")
-def api_list_posts(board_slug: str, limit: int = 20, offset: int = 0, db: Session = Depends(get_db)):
-    board = crud.get_board_by_slug(db, board_slug)
-    if not board:
-        raise HTTPException(404, "Board not found")
-    posts = crud.get_posts(db, board.id, limit=limit, offset=offset)
+def api_list_posts(board_slug: str | None = None, limit: int = 20, offset: int = 0, db: Session = Depends(get_db)):
+    if board_slug:
+        board = crud.get_board_by_slug(db, board_slug)
+        if not board:
+            raise HTTPException(404, "Board not found")
+        posts = crud.get_posts(db, board.id, limit=limit, offset=offset)
+    else:
+        posts = crud.get_recent_posts(db, limit=limit)
     return [
         {
             "id": p["post"].id, "title": p["post"].title, "author": p["post"].author,
@@ -207,7 +210,7 @@ def api_create_reply(post_id: int, data: ReplyCreate, db: Session = Depends(get_
     try:
         reply = crud.create_reply(db, post_id, data)
     except ValueError as e:
-        raise HTTPException(400, str(e))
+        raise HTTPException(404, str(e))
     return {"id": reply.id, "created_at": reply.created_at.isoformat()}
 
 
