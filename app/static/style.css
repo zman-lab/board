@@ -8,7 +8,7 @@
   --border: #e2e8f0; --border-light: #f1f5f9;
   --accent-law: #3b82f6; --accent-buspush: #22c55e;
   --accent-airlock: #ef4444; --accent-elkhound: #f97316;
-  --accent-global: #6366f1;
+  --accent-board: #64748b; --accent-global: #6366f1;
   --radius: 10px; --shadow: 0 1px 3px rgba(0,0,0,.08);
   --shadow-lg: 0 4px 12px rgba(0,0,0,.1);
 }
@@ -162,6 +162,7 @@ main { padding: 24px 0; }
 .quick-link:hover { opacity: .75; }
 .quick-link.airlock { color: var(--accent-airlock); border-color: var(--accent-airlock); }
 .quick-link.law     { color: var(--accent-law);     border-color: var(--accent-law); }
+.quick-link.board   { color: var(--accent-board);   border-color: var(--accent-board); }
 
 .post-item .title-area { flex: 1; min-width: 0; }
 .post-item .title-area a {
