@@ -152,6 +152,18 @@ def delete_post(db: Session, post_id: int) -> bool:
     return True
 
 
+def restore_post(db: Session, post_id: int) -> bool:
+    """소프트 삭제된 글을 복구한다."""
+    post = db.query(Post).filter(Post.id == post_id, Post.is_deleted == True).first()
+    if not post:
+        return False
+    post.is_deleted = False
+    # replies도 함께 복구
+    db.query(Post).filter(Post.parent_id == post_id, Post.is_deleted == True).update({"is_deleted": False})
+    db.commit()
+    return True
+
+
 def search_posts(db: Session, keyword: str, board_slug: str | None = None, limit: int = 20) -> list[dict]:
     query = db.query(Post).filter(
         Post.parent_id == None,

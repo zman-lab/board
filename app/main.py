@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db, init_db
 from app.seed import seed_data
 from app import crud
-from app.schemas import BoardCreate, PostCreate, ReplyCreate, LikeCreate
+from app.schemas import BoardCreate, PostCreate, PostUpdate, ReplyCreate, LikeCreate
 
 
 @asynccontextmanager
@@ -225,12 +225,31 @@ def api_get_likes(post_id: int, db: Session = Depends(get_db)):
     return crud.get_likes(db, post_id)
 
 
+@app.put("/api/posts/{post_id}")
+def api_update_post(post_id: int, data: PostUpdate, db: Session = Depends(get_db)):
+    post = crud.update_post(db, post_id, title=data.title, content=data.content)
+    if not post:
+        raise HTTPException(404, "Post not found")
+    return {
+        "id": post.id, "title": post.title, "content": post.content,
+        "updated_at": post.updated_at.isoformat() if post.updated_at else None,
+    }
+
+
 @app.delete("/api/posts/{post_id}")
 def api_delete_post(post_id: int, db: Session = Depends(get_db)):
     ok = crud.delete_post(db, post_id)
     if not ok:
         raise HTTPException(404, "Post not found")
     return {"ok": True}
+
+
+@app.post("/api/posts/{post_id}/restore")
+def api_restore_post(post_id: int, db: Session = Depends(get_db)):
+    ok = crud.restore_post(db, post_id)
+    if not ok:
+        raise HTTPException(404, "Post not found or not deleted")
+    return {"ok": True, "post_id": post_id}
 
 
 @app.post("/api/boards")

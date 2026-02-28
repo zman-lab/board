@@ -38,6 +38,11 @@ class PostCreate(BaseModel):
     is_pinned: bool = False
 
 
+class PostUpdate(BaseModel):
+    title: str | None = None
+    content: str | None = None
+
+
 class ReplyCreate(BaseModel):
     content: str
     author: str
